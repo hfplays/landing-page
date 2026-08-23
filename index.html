@@ -14,11 +14,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="assets/style.css">
+    <script>
+        (function () {
+            const theme = localStorage.getItem('hfplays_theme') || 'dark';
+            const isMobile = window.innerWidth <= 780 || window.matchMedia('(max-width: 780px)').matches || window.matchMedia('(pointer: coarse)').matches;
+            const defaultView = isMobile ? 'lite' : 'normal';
+            const view = localStorage.getItem('hfplays_view') || defaultView;
+
+            document.documentElement.setAttribute('data-theme', theme);
+            document.documentElement.setAttribute('data-view', view);
+            document.documentElement.setAttribute('data-bs-theme', theme);
+        })();
+    </script>
 </head>
 
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
         <div class="container">
             <a class="navbar-brand fw-bold fs-4 text-white" href="#home">
                 HF <span>Plays</span>
@@ -27,6 +39,12 @@
                 aria-label="Toggle navigation">
                 <i class="fa-solid fa-bars text-white fs-4"></i>
             </button>
+            <div class="nav-controls" aria-label="Display controls">
+                <button class="nav-control-btn eco-toggle" type="button" aria-label="Switch to Eco Mode"
+                    title="Switch to Eco Mode"><i class="fa-solid fa-bolt"></i></button>
+                <button class="nav-control-btn theme-toggle" type="button" aria-label="Switch to light mode"
+                    title="Switch theme"><i class="fa-solid fa-sun"></i></button>
+            </div>
             <div class="collapse navbar-collapse" id="navMenu">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-1 gap-lg-3">
                     <li class="nav-item"><a class="nav-link active" href="#home">Home</a></li>
@@ -78,25 +96,22 @@
 
     <header class="hero-section" id="home">
         <div class="container text-center">
-            <img src="img/hfplays.png" alt="HF Plays Logo" class="hero-avatar mb-4">
-            <h1 class="display-5 fw-bold text-white mb-3">LEVEL UP YOUR <span
-                    style="color: var(--accent-purple);">GAMING PERFORMANCE</span></h1>
-            <p class="lead text-muted-custom mx-auto mb-4" style="max-width: 680px;">
+            <img src="img/hfplays.png" alt="HF Plays Logo" class="hero-avatar">
+            <h1 class="display-5 fw-bold text-white">LEVEL UP YOUR <span>GAMING PERFORMANCE</span></h1>
+            <p class="lead text-muted-custom hero-desc">
                 Discover the ultimate way to optimize your PC with real-world benchmark archives, FPS comparisons, and
                 hardware optimization tutorials.
             </p>
-            <div class="d-flex flex-column align-items-center gap-3">
-                <a href="https://www.youtube.com/@hfplays/" target="_blank" class="btn btn-purple"
-                    style="width: 280px; min-width: 220px; max-width: 100%;">
+            <div class="hero-actions-container">
+                <a href="https://www.youtube.com/@hfplays/" target="_blank" class="btn btn-purple hero-btn-main">
                     <i class="fa-brands fa-youtube me-2"></i> YouTube Channel
                 </a>
-                <div class="d-flex justify-content-center gap-3 flex-wrap" style="width: min(100%, 640px);">
+                <div class="hero-sub-actions">
                     <a href="https://resources.hfplays.my.id" target="_blank" rel="noopener noreferrer"
-                        class="btn btn-outline-custom" style="width: 280px; min-width: 220px; max-width: 100%;">
+                        class="btn btn-outline-custom hero-btn-sub">
                         <i class="fa-solid fa-chart-line me-2"></i> Open BenchmarkResult
                     </a>
-                    <a href="https://discord.com/invite/ZDk9HJsNKS" target="_blank" class="btn btn-outline-custom"
-                        style="width: 280px; min-width: 220px; max-width: 100%;">
+                    <a href="https://discord.com/invite/ZDk9HJsNKS" target="_blank" class="btn btn-outline-custom hero-btn-sub">
                         <i class="fa-brands fa-discord me-2"></i> Join Community
                     </a>
                 </div>
@@ -120,7 +135,7 @@
 
                 <div class="col-md-6 col-lg-3">
                     <div class="glass-card p-4 h-100 d-flex flex-column text-center">
-                        <div class="fs-2 mb-3" style="color: #e1306c;"><i class="fa-brands fa-instagram"></i></div>
+                        <div class="fs-2 mb-3 icon-instagram"><i class="fa-brands fa-instagram"></i></div>
                         <h5 class="text-white fw-bold mb-2">Instagram</h5>
                         <p class="text-muted-custom small mb-4 flex-grow-1">Highlights, short game clips, and setup
                             archives directly on your feed.</p>
@@ -142,7 +157,7 @@
 
                 <div class="col-md-6 col-lg-3">
                     <div class="glass-card p-4 h-100 d-flex flex-column text-center">
-                        <div class="fs-2 mb-3" style="color: #5865f2;"><i class="fa-brands fa-discord"></i></div>
+                        <div class="fs-2 mb-3 icon-discord"><i class="fa-brands fa-discord"></i></div>
                         <h5 class="text-white fw-bold mb-2">Discord</h5>
                         <p class="text-muted-custom small mb-4 flex-grow-1">Join our community discussions, share
                             configs, and game together.</p>
@@ -355,83 +370,27 @@
         </div>
     </section>
 
+    <!-- About Section (Full-Width Text) -->
     <section class="py-5" id="about">
         <div class="container">
             <div class="glass-card p-4 p-lg-5">
-                <div class="row align-items-center g-4">
-                    <div class="col-lg-8 text-center text-lg-start">
+                <div class="row g-4">
+                    <div class="col-12 text-center text-lg-start">
                         <h2 class="section-title mb-2">About <span>HF Plays</span></h2>
                         <h4 class="text-white fw-semibold mb-3 about-name">
                             Hilmi Fauzan <span class="about-dash">—</span> <span
                                 class="text-muted-custom fs-5 about-role">Content Creator &amp; Web Developer</span>
                         </h4>
-                        <p class="text-muted-custom">
+                        <p class="text-muted-custom about-text mb-3">
                             Hilmi Fauzan is a passionate content creator focusing on real-world hardware benchmarking,
                             game performance tests on budget systems, and PC optimization tutorials.
                         </p>
-                        <p class="text-muted-custom mb-0">
+                        <p class="text-muted-custom about-text mb-0">
                             Equipped with strong web development and video production skills, HF Plays aims to provide
                             transparent, accurate, and accessible gaming performance insights for the community.
                         </p>
                     </div>
-                    <div class="col-lg-4 text-center">
-                        <div class="d-inline-flex gap-2 flex-wrap justify-content-center">
-                            <a href="https://www.youtube.com/@hfplays" target="_blank" class="social-pill"
-                                title="YouTube"><i class="fa-brands fa-youtube"></i></a>
-                            <a href="https://discord.com/users/790507566333558784" target="_blank" class="social-pill"
-                                title="Discord"><i class="fa-brands fa-discord"></i></a>
-                            <a href="https://www.tiktok.com/@6hfplays" target="_blank" class="social-pill"
-                                title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
-                            <a href="https://www.instagram.com/hfplays/" target="_blank" class="social-pill"
-                                title="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                            <a href="https://www.linkedin.com/in/hilmi-fauzan-245a14428/" target="_blank"
-                                rel="noopener noreferrer" class="social-pill" title="LinkedIn"><i
-                                    class="fa-brands fa-linkedin-in"></i></a>
-                            <a href="https://www.facebook.com/HFPlays/" target="_blank" class="social-pill"
-                                title="Facebook"><i class="fa-brands fa-facebook-messenger"></i></a>
-                        </div>
-                    </div>
                 </div>
-
-                <style>
-                    @media (max-width: 768px) {
-                        #about .row {
-                            text-align: center;
-                        }
-
-                        #about .col-lg-8,
-                        #about .col-lg-4 {
-                            text-align: center;
-                        }
-
-                        #about .about-name {
-                            display: block;
-                            margin-bottom: 0.25rem;
-                        }
-
-                        #about .about-dash {
-                            display: none;
-                        }
-
-                        #about .about-role {
-                            display: block;
-                            margin-top: 0.25rem;
-                            margin-bottom: 1rem;
-                        }
-                    }
-
-                    .contact-link {
-                        transition: all 0.25s ease;
-                        padding: 0.25rem 0.5rem;
-                        border-radius: 10px;
-                    }
-
-                    .contact-link:hover {
-                        color: #7dd3fc !important;
-                        background: rgba(125, 211, 252, 0.08);
-                        transform: translateX(4px);
-                    }
-                </style>
             </div>
         </div>
     </section>
@@ -505,8 +464,7 @@
                             <div class="d-flex flex-column gap-3 mb-4">
                                 <a href="https://www.youtube.com/@hfplays" target="_blank" rel="noopener noreferrer"
                                     class="d-flex align-items-center gap-3 text-decoration-none text-light contact-link">
-                                    <div class="fs-5 text-danger d-flex justify-content-center align-items-center"
-                                        style="width: 28px;">
+                                    <div class="fs-5 text-danger d-flex justify-content-center align-items-center contact-icon-wrap">
                                         <i class="fa-brands fa-youtube"></i>
                                     </div>
                                     <span>HF Plays</span>
@@ -514,8 +472,7 @@
 
                                 <a href="https://resources.hfplays.my.id" target="_blank" rel="noopener noreferrer"
                                     class="d-flex align-items-center gap-3 text-decoration-none text-light contact-link benchmark-link">
-                                    <div class="fs-5 text-info d-flex justify-content-center align-items-center"
-                                        style="width: 28px;">
+                                    <div class="fs-5 text-info d-flex justify-content-center align-items-center contact-icon-wrap">
                                         <i class="fa-solid fa-chart-line"></i>
                                     </div>
                                     <span>BenchmarkResult by HF Plays</span>
@@ -523,8 +480,7 @@
 
                                 <a href="https://www.tiktok.com/@6hfplays" target="_blank" rel="noopener noreferrer"
                                     class="d-flex align-items-center gap-3 text-decoration-none text-light contact-link">
-                                    <div class="fs-5 text-white d-flex justify-content-center align-items-center"
-                                        style="width: 28px;">
+                                    <div class="fs-5 text-white d-flex justify-content-center align-items-center contact-icon-wrap">
                                         <i class="fa-brands fa-tiktok"></i>
                                     </div>
                                     <span>HF Plays</span>

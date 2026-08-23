@@ -1,17 +1,19 @@
 function toggleDropdown() {
-    document.getElementById('customDropdown').classList.toggle('open');
+    document.getElementById('customDropdown')?.classList.toggle('open');
 }
 
 function selectPlatform(val, html, element) {
     if (element.classList.contains('disabled')) return;
 
-    document.getElementById('platformSelect').value = val;
-    document.getElementById('selectedDisplay').innerHTML = html;
+    const select = document.getElementById('platformSelect');
+    const display = document.getElementById('selectedDisplay');
+    if (select) select.value = val;
+    if (display) display.innerHTML = html;
 
     document.querySelectorAll('.custom-option').forEach(el => el.classList.remove('selected'));
     element.classList.add('selected');
 
-    document.getElementById('customDropdown').classList.remove('open');
+    document.getElementById('customDropdown')?.classList.remove('open');
 }
 
 document.addEventListener('click', (e) => {
@@ -24,10 +26,10 @@ document.addEventListener('click', (e) => {
 function handleFormSubmit(e) {
     e.preventDefault();
 
-    const platform = document.getElementById('platformSelect').value;
-    const name = document.getElementById('name').value.trim();
-    const contact = document.getElementById('contactInfo').value.trim();
-    const message = document.getElementById('message').value.trim();
+    const platform = document.getElementById('platformSelect')?.value;
+    const name = document.getElementById('name')?.value.trim() || '';
+    const contact = document.getElementById('contactInfo')?.value.trim() || '';
+    const message = document.getElementById('message')?.value.trim() || '';
 
     if (platform === 'email') {
         const subject = encodeURIComponent(`Benchmark Inquiry from ${name}`);
@@ -41,11 +43,54 @@ function handleFormSubmit(e) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    const themeToggle = document.querySelector('.theme-toggle');
+    const ecoToggle = document.querySelector('.eco-toggle');
+    const root = document.documentElement;
+
+    const updateModeControls = () => {
+        const theme = root.getAttribute('data-theme') || 'dark';
+        const isMobile = window.innerWidth <= 780 || window.matchMedia('(max-width: 780px)').matches || window.matchMedia('(pointer: coarse)').matches;
+        const defaultView = isMobile ? 'lite' : 'normal';
+        const view = root.getAttribute('data-view') || defaultView;
+
+        if (themeToggle) {
+            themeToggle.innerHTML = theme === 'dark'
+                ? '<i class="fa-solid fa-sun"></i>'
+                : '<i class="fa-solid fa-moon"></i>';
+            themeToggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+        }
+
+        if (ecoToggle) {
+            ecoToggle.classList.toggle('is-active', view === 'lite');
+            ecoToggle.innerHTML = view === 'lite'
+                ? '<i class="fa-solid fa-bolt"></i>'
+                : '<i class="fa-solid fa-feather-pointed"></i>';
+            ecoToggle.setAttribute('aria-label', view === 'lite' ? 'Eco Mode active. Switch to rich mode' : 'Switch to Eco Mode');
+        }
+    };
+
+    themeToggle?.addEventListener('click', () => {
+        const nextTheme = (root.getAttribute('data-theme') || 'dark') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', nextTheme);
+        root.setAttribute('data-bs-theme', nextTheme);
+        localStorage.setItem('hfplays_theme', nextTheme);
+        updateModeControls();
+    });
+
+    ecoToggle?.addEventListener('click', () => {
+        const nextView = (root.getAttribute('data-view') || 'normal') === 'lite' ? 'normal' : 'lite';
+        root.setAttribute('data-view', nextView);
+        localStorage.setItem('hfplays_view', nextView);
+        updateModeControls();
+    });
+
+    updateModeControls();
+
     if (window.location.hash) {
         history.replaceState(null, '', window.location.pathname + window.location.search);
     }
 
-    // 1. Scroll-Reveal Observer
+    // 1. Scroll-Reveal Observer Ringan
     const revealElements = document.querySelectorAll('.glass-card, .section-title, .hero-section, .contact-form');
     revealElements.forEach(el => el.classList.add('reveal-init'));
 
@@ -56,31 +101,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 observer.unobserve(entry.target);
             }
         });
-    }, { threshold: 0.12 });
+    }, { threshold: 0.1 });
 
     revealElements.forEach((el, index) => {
         el.classList.add(`delay-${(index % 4) + 1}`);
         revealObserver.observe(el);
     });
 
-    // 2. Mouse Glow Spotlight Effect
-    document.querySelectorAll('.glass-card').forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            card.style.setProperty('--mouse-x', `${x}px`);
-            card.style.setProperty('--mouse-y', `${y}px`);
-        });
-    });
-
-    // 3. Active Nav Link Tracking
+    // 2. Active Nav Link Tracking
     const sections = document.querySelectorAll('section[id], header[id]');
     const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
 
     function updateActiveLink() {
         let currentSection = '';
-        
         sections.forEach(section => {
             const sectionTop = section.offsetTop;
             if (window.pageYOffset >= sectionTop - 200) {
@@ -96,10 +129,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    window.addEventListener('scroll', updateActiveLink);
+    window.addEventListener('scroll', updateActiveLink, { passive: true });
     updateActiveLink();
 
-    // 4. Smooth Anchor Scrolling
+    // 3. Smooth Anchor Scrolling
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             const targetId = this.getAttribute('href');
@@ -114,12 +147,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 5. Privacy Policy Modal Handling
+    // 4. Privacy Policy Modal Handling
     const privacyModal = document.getElementById('privacyModal');
     const privacyPolicyBtn = document.getElementById('privacyPolicyBtn');
     const privacyModalClose = document.getElementById('privacyModalClose');
 
     function closePrivacyModal() {
+        if (!privacyModal) return;
         privacyModal.classList.remove('show');
         setTimeout(() => {
             privacyModal.hidden = true;
@@ -127,23 +161,25 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.remove('privacy-modal-open');
     }
 
-    privacyPolicyBtn.addEventListener('click', () => {
-        privacyModal.hidden = false;
-        document.body.classList.add('privacy-modal-open');
-        requestAnimationFrame(() => privacyModal.classList.add('show'));
-        privacyModalClose.focus();
-    });
+    if (privacyPolicyBtn && privacyModal && privacyModalClose) {
+        privacyPolicyBtn.addEventListener('click', () => {
+            privacyModal.hidden = false;
+            document.body.classList.add('privacy-modal-open');
+            requestAnimationFrame(() => privacyModal.classList.add('show'));
+            privacyModalClose.focus();
+        });
 
-    privacyModalClose.addEventListener('click', closePrivacyModal);
-    privacyModal.addEventListener('click', (event) => {
-        if (event.target === privacyModal) closePrivacyModal();
-    });
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && !privacyModal.hidden) closePrivacyModal();
-    });
+        privacyModalClose.addEventListener('click', closePrivacyModal);
+        privacyModal.addEventListener('click', (event) => {
+            if (event.target === privacyModal) closePrivacyModal();
+        });
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && !privacyModal.hidden) closePrivacyModal();
+        });
+    }
 });
 
-// 6. Cookie Consent Banner Handling
+// 5. Cookie Consent Banner Handling
 (function initCookieConsent() {
     const isAccepted = localStorage.getItem('hfplays_cookies_status') === 'accepted';
     const isDeclined = sessionStorage.getItem('hfplays_cookies_status') === 'declined';
@@ -174,11 +210,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             banner.classList.add('show');
-        }, 700);
+        }, 400);
 
         function closeBanner() {
             banner.classList.remove('show');
-            setTimeout(() => banner.remove(), 400);
+            banner.remove();
         }
 
         document.getElementById('acceptCookieBtn')?.addEventListener('click', () => {

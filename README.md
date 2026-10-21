@@ -6,7 +6,7 @@
 
 ## 🌐 Live Website
 🔗 **Main Portal:** [hfplays.github.io](https://hfplays.github.io)
-🔗 **Benchmark Database:** [bench.hfplays.my.id](https://bench.hfplays.my.id)
+🔗 **Benchmark Database:** [bench.hfplays.com](https://bench.hfplays.com)
 
 ---
 
